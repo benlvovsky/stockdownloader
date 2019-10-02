@@ -1,0 +1,9 @@
+numpy
+pandas
+Quandl
+requests
+scandir
+scipy
+seaborn
+PyYAML
+pandas_datareader
