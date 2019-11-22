@@ -6,6 +6,9 @@ class TiingoExt(TiingoDailyReader):
     """
     Historical daily data from Tiingo on equities, ETFs and mutual funds
     """
+
+    downloads_folder = 'downloads'
+
     def __init__(self, symbols, start=None, end=None, retry_count=3, pause=0.1,
                  timeout=30, session=None, freq=None, api_key=None, extheaders={}):
         super(TiingoExt, self).__init__(symbols, start=start, end=end, retry_count=retry_count,
@@ -23,12 +26,17 @@ class TiingoExt(TiingoDailyReader):
         for i in range(self.retry_count):
             try:
                 out = self._get_response(url, params=params, headers=headers).json()
-                return self._read_lines(out)
-            except  requests.exceptions.ConnectionError as e:
+                df = self._read_lines(out)
+                df.to_csv(f'{self.downloads_folder}/{self._symbol}_tiingo.csv', index=False)
+                return df
+            except requests.exceptions.ConnectionError as e:
                 print('Exception {}'.format(e))
                 except_to_throw = e
+            except Exception as ee:
+                print(f'Unexpected exception {ee}')
+                except_to_throw = ee
 
-        print('Symbol {} skipped due to exception: {}'.format(except_to_throw))
+        print(f'Symbol skipped due to exception: {except_to_throw}')
         return None
 
     # raise except_to_throw
@@ -36,13 +44,14 @@ class TiingoExt(TiingoDailyReader):
     def read(self):
         df_orig = super(TiingoExt, self).read()
         df_orig = df_orig.reset_index()
-        df_orig.to_csv('downloads/df_orig_tiingo.csv')
-        column_names = ['symbol','date','adjClose','adjHigh','adjLow','adjOpen','adjVolume','close','divCash','high','low','open','splitFactor','volume']
+        df_orig.to_csv('{self.downloads_folder}/df_orig_tiingo.csv')
+        column_names = ['symbol', 'date', 'adjClose', 'adjHigh', 'adjLow', 'adjOpen', 'adjVolume', 'close', 'divCash', 'high', 'low', 'open', 'splitFactor', 'volume']
         df_orig.columns = column_names
         df_result = df_orig[['symbol', 'date', 'adjClose']]
         df_result.columns = ['symbol', 'date', 'close']
-        df_result.to_csv('downloads/df_tiingo_converted.csv')
+        df_result.to_csv('{self.downloads_folder}/df_tiingo_converted.csv')
         return df_result
+
 
 class TiingoPandas:
     """
@@ -63,12 +72,12 @@ class TiingoPandas:
 
     def read(self):
         df_orig = pdr.get_data_tiingo(self.symbols, api_key=self.api_key)
-        df_orig.to_csv('downloads/df_orig_tiingo.csv')
+        df_orig.to_csv('{self.downloads_folder}/df_orig_tiingo.csv')
         exit(0)
         column_names = ['Symbol', 'Date', 'Price', 'Open', 'High', 'Low', 'Vol']
         df_orig.columns = column_names
         df_result = df_orig[['Symbol', 'Date', 'Price']]
         df_result.columns = ['symbol', 'date', 'close']
-        df_result.to_csv('downloads/df_converter.csv')
+        df_result.to_csv('{self.downloads_folder}/df_converter.csv')
         return df_result
         return df

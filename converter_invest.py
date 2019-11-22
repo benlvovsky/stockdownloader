@@ -2,12 +2,13 @@ import pandas as pd
 
 column_names = ['Symbol', 'Date', 'Price', 'Open', 'High', 'Low', 'Vol']
 
+
 class FormatConverter():
     """
     converts file "upload" format into "upload1"
     Useful for files downloaded in one format to be processed with the  latest systems.
     """
-    def __init__(self, start_date, file_name = 'data.csv'):
+    def __init__(self, start_date, file_name='data.csv'):
         self.start_date = start_date
         self.column_names = column_names
         self.file_name = file_name

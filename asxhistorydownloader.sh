@@ -26,6 +26,9 @@ mkdir -p $savedir
 #wget -O floatdatadownload/2018.zip "http://float.com.au/download/2018.zip?ticker=GL,AMC,AMP,ANZ,APA,ALL,ASX,AZJ,BHP,BXB,CTX,COH,COL,CBA,CPU,CSL,DXS,FMG,GMG,GPT,IAG,JHX,LLC,MQG,MPL,MGR,NAB,NCM,OSH,ORI,ORG,QAN,QBE,RHC,RIO,STO,SCG,SHL,S32,SGP,SUN,SYD,TLS,TCL,TWE,VCX,WES,WBC,WPL,WOW"
 #wget -O floatdatadownload/2019.zip "http://float.com.au/download/2019.zip?ticker=GL,AMC,AMP,ANZ,APA,ALL,ASX,AZJ,BHP,BXB,CTX,COH,COL,CBA,CPU,CSL,DXS,FMG,GMG,GPT,IAG,JHX,LLC,MQG,MPL,MGR,NAB,NCM,OSH,ORI,ORG,QAN,QBE,RHC,RIO,STO,SCG,SHL,S32,SGP,SUN,SYD,TLS,TCL,TWE,VCX,WES,WBC,WPL,WOW"
 
+#https://www.asxhistoricaldata.com/
+#https://www.marketindex.com.au/sites/default/files/historical-data/A2M.csv
+
 pushd $savedir
 
 unzip "*.zip"

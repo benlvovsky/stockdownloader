@@ -8,6 +8,7 @@ import converter_invest     as cv_invest
 import converter_asxhist    as cv_asxhist
 import requests
 import quandlreader as qr
+import marketindex as mi
 import marketdata as md
 import numpy as np
 import pytz
@@ -32,8 +33,8 @@ class FinDownloader:
         self.dateColumn     = st.config['downloaders'][source]['dateColumn']
         self.priceColumn    = st.config['downloaders'][source]['priceColumn']
         self.directory      = st.config['downloaders'][source]['directory']
-        self.access_key     = st.config['downloaders'][source]['access_key']
-        self.inputfilename  = st.config['downloaders'][source]['inputfilename']
+        self.access_key     = st.config['downloaders'][source].get('access_key', '')
+        self.inputfilename  = st.config['downloaders'][source].get('inputfilename', '')
         self.date_format    = st.config['downloaders'][source]['dateFormat']
 
     def downloadInstruments(self, symbols, start_date, final_date):
@@ -71,10 +72,12 @@ class FinDownloader:
             "marketdata": md.MarketData(symbolsArray, start_date, final_date, session=session),
             "converter_invest": lambda: cv_invest.FormatConverter(start_date, self.inputfilename),
             "converter_asxhist": lambda: cv_asxhist.FormatConverter(start_date, self.inputfilename),
-            "tiingo": lambda:cv_tiingo.TiingoExt(symbolsArray, start_date, final_date, api_key=self.access_key,
-                                                           retry_count=10, pause=0.3, extheaders=session.headers),
+            "tiingo": lambda: cv_tiingo.TiingoExt(symbolsArray, start_date, final_date, api_key=self.access_key,
+                                                  retry_count=10, pause=0.3, extheaders=session.headers),
             "quandl": lambda: qr.Quandl(symbolsArray, start_date, final_date, api_key=self.access_key,
-                                  retry_count=10, pause=0.3, extheaders=session.headers)
+                                        retry_count=10, pause=0.3, extheaders=session.headers),
+            "marketindex": lambda: mi.MarketIndex(symbolsArray, start_date, final_date, api_key=self.access_key,
+                                                  retry_count=10, pause=0.3, extheaders=session.headers)
         }
 
         allColumnsOrigDf = downloaders[self.source]().read()
