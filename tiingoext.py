@@ -2,6 +2,7 @@ import pandas_datareader as pdr
 from pandas_datareader.tiingo import TiingoDailyReader, TiingoQuoteReader
 import requests
 
+
 class TiingoExt(TiingoDailyReader):
     """
     Historical daily data from Tiingo on equities, ETFs and mutual funds
@@ -27,7 +28,7 @@ class TiingoExt(TiingoDailyReader):
             try:
                 out = self._get_response(url, params=params, headers=headers).json()
                 df = self._read_lines(out)
-                df.to_csv(f'{self.downloads_folder}/{self._symbol}_tiingo.csv', index=False)
+                df.to_csv(f'{self.downloads_folder}/{self._symbol}.csv')
                 return df
             except requests.exceptions.ConnectionError as e:
                 print('Exception {}'.format(e))
@@ -44,12 +45,12 @@ class TiingoExt(TiingoDailyReader):
     def read(self):
         df_orig = super(TiingoExt, self).read()
         df_orig = df_orig.reset_index()
-        df_orig.to_csv('{self.downloads_folder}/df_orig_tiingo.csv')
+        df_orig.to_csv(f'{self.downloads_folder}/df_orig_tiingo.csv')
         column_names = ['symbol', 'date', 'adjClose', 'adjHigh', 'adjLow', 'adjOpen', 'adjVolume', 'close', 'divCash', 'high', 'low', 'open', 'splitFactor', 'volume']
         df_orig.columns = column_names
         df_result = df_orig[['symbol', 'date', 'adjClose']]
         df_result.columns = ['symbol', 'date', 'close']
-        df_result.to_csv('{self.downloads_folder}/df_tiingo_converted.csv')
+        df_result.to_csv(f'{self.downloads_folder}/df_tiingo_converted.csv')
         return df_result
 
 
@@ -72,12 +73,12 @@ class TiingoPandas:
 
     def read(self):
         df_orig = pdr.get_data_tiingo(self.symbols, api_key=self.api_key)
-        df_orig.to_csv('{self.downloads_folder}/df_orig_tiingo.csv')
+        df_orig.to_csv(f'{self.downloads_folder}/df_orig_tiingo.csv')
         exit(0)
         column_names = ['Symbol', 'Date', 'Price', 'Open', 'High', 'Low', 'Vol']
         df_orig.columns = column_names
         df_result = df_orig[['Symbol', 'Date', 'Price']]
         df_result.columns = ['symbol', 'date', 'close']
-        df_result.to_csv('{self.downloads_folder}/df_converter.csv')
+        df_result.to_csv('f{self.downloads_folder}/df_converter.csv')
         return df_result
         return df
