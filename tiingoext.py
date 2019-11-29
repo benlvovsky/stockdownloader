@@ -21,8 +21,7 @@ class TiingoExt(TiingoDailyReader):
         headers = {'Content-Type': 'application/json',
                    'Authorization': 'Token ' + self.api_key}
         headers.update(self.extheaders)
-        # print 'headers={}'.format(headers)
-        print('url={}'.format(url))
+        print(f'url={url}')
         except_to_throw = None
         for i in range(self.retry_count):
             try:
@@ -36,11 +35,10 @@ class TiingoExt(TiingoDailyReader):
             except Exception as ee:
                 print(f'Unexpected exception {ee}')
                 except_to_throw = ee
+                break   # on such exception no reason to retry
 
         print(f'Symbol skipped due to exception: {except_to_throw}')
         return None
-
-    # raise except_to_throw
 
     def read(self):
         df_orig = super(TiingoExt, self).read()
@@ -52,33 +50,3 @@ class TiingoExt(TiingoDailyReader):
         df_result.columns = ['symbol', 'date', 'close']
         df_result.to_csv(f'{self.downloads_folder}/df_tiingo_converted.csv')
         return df_result
-
-
-class TiingoPandas:
-    """
-    Historical daily data from Tiingo
-    """
-    def __init__(self, symbols, start=None, end=None, retry_count=3, pause=0.1,
-                 timeout=30, session=None, freq=None, api_key=None, extheaders={}):
-        self.symbols = symbols
-        self.start=start
-        self.end=end
-        self.retry_count=retry_count
-        self.pause=pause
-        self.timeout=timeout
-        self.session=session
-        self.freq=freq
-        self.api_key=api_key
-        self.extheaders = extheaders
-
-    def read(self):
-        df_orig = pdr.get_data_tiingo(self.symbols, api_key=self.api_key)
-        df_orig.to_csv(f'{self.downloads_folder}/df_orig_tiingo.csv')
-        exit(0)
-        column_names = ['Symbol', 'Date', 'Price', 'Open', 'High', 'Low', 'Vol']
-        df_orig.columns = column_names
-        df_result = df_orig[['Symbol', 'Date', 'Price']]
-        df_result.columns = ['symbol', 'date', 'close']
-        df_result.to_csv('f{self.downloads_folder}/df_converter.csv')
-        return df_result
-        return df

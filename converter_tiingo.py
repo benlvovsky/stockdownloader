@@ -16,7 +16,6 @@ class FormatConverter:
 
     def read(self):
         df_arr = []
-        df_orig = None
         for s in self.symbols:
             try:
                 print(f'reading {s} from file {self.download_path}/{s}.csv...', end='')
@@ -27,8 +26,6 @@ class FormatConverter:
                 print(f'failed: {e}')
 
         print(f'merging all...', end='')
-        # for dtf in df_arr:
-        #     print(f'type(dtf) = {type(dtf)}')
         df_orig = pd.concat(df_arr, sort=False)
         print(f'done')
 
